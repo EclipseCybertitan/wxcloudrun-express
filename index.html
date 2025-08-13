@@ -17,8 +17,8 @@
     input, select, button { width: 100%; padding: 12px; border:1px solid #ddd; border-radius:10px; font-size: 15px; }
     button { background: var(--pri); color: #fff; border: none; font-weight: 600; }
     button:disabled { opacity: .6; }
-    .row { display:flex; gap:12px; }
-    .row .col { flex:1; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; }
+    .row .col { flex:1; min-width: 140px; }
     .result { margin-top: 16px; }
     .result .item { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px dashed #eee; }
     .result .item:last-child { border-bottom: none; }
@@ -26,11 +26,6 @@
     .divider { height: 1px; background:#eee; margin:16px 0; }
     .cta { display:flex; flex-direction:column; gap:10px; }
     .btn-outline { background:#fff; color:var(--pri); border:1px solid var(--pri); }
-    .ad-mask { position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; z-index:999; }
-    .ad-box { width: min(92vw, 480px); background:#fff; border-radius:14px; padding:16px; text-align:center; }
-    .ad-title { font-weight:700; margin-bottom:6px; }
-    .ad-img { width:100%; height:160px; background:#eee; border-radius:10px; margin:10px 0; display:flex; align-items:center; justify-content:center; color:#999; }
-    .ad-actions { display:flex; gap:10px; margin-top:10px;}
     .foot { color:#888; font-size:12px; line-height:1.6; margin-top:16px; }
     a { color:#2b6cb0; text-decoration:none; }
   </style>
@@ -39,7 +34,7 @@
   <div class="wrap">
     <div class="header">
       <div class="title">全国房租税费计算器（2025版）</div>
-      <div class="subtitle">基于全国简易计税方案：住宅3%，非住宅5%；查账征收差异较大，暂不提供计算。</div>
+      <div class="subtitle">基于全国简易计税方案：住宅房产税4%，个税10%；非住宅税率示例可调整。</div>
     </div>
 
     <div class="card">
@@ -51,32 +46,37 @@
         <div class="col field">
           <label>房屋类型</label>
           <select id="houseType">
-            <option value="residential">住宅（3%）</option>
-            <option value="non_residential">非住宅（5%）</option>
+            <option value="residential">住宅（房产税4%，个税10%）</option>
+            <option value="non_residential">非住宅（示例房产税12%，个税20%）</option>
           </select>
         </div>
+      </div>
+
+      <div class="field">
+        <label><input type="checkbox" id="propDeduction" /> 房产税扣除800元修缮费</label>
+        <label><input type="checkbox" id="incDeduction" /> 个税扣除800元租金</label>
       </div>
 
       <button id="calcBtn">计算</button>
 
       <div id="result" class="result" style="display:none;">
         <div class="divider"></div>
-        <div class="item"><span>房产税（约）</span><b id="propTax">-</b></div>
-        <div class="item"><span>个人所得税（约）</span><b id="incTax">-</b></div>
-        <div class="item"><span>合计税费</span><b id="totalTax">-</b></div>
-        <div class="mut" style="margin-top:8px;">提示：本页面采用全国简易计税方案。实际税率可能随地区口径略有调整。</div>
+        <div class="item"><span>房产税（约 / 月）</span><b id="propTax">-</b></div>
+        <div class="item"><span>个人所得税（约 / 月）</span><b id="incTax">-</b></div>
+        <div class="item"><span>合计税费（约 / 月）</span><b id="totalTax">-</b></div>
+        <div class="mut" style="margin-top:8px;">提示：低于等于800元时可全额免税，扣除选项会影响基数。</div>
       </div>
 
       <div class="divider"></div>
 
       <div class="cta">
-        <button id="freeLawBtn" class="btn-outline">免费获取律师建议（合同风控与节税要点）</button>
+        <button id="freeLawBtn" class="btn-outline">免费获取律师建议</button>
         <div id="leadTips" class="mut" style="display:none;">
-          👉 已为你准备交流群与指引：<br/>
-          • 群链接：<a target="_blank" href="https://weixin.qq.com/xxxxx">点击加入微信群</a><br/>
-          • 或添加微信：<b>Lawyer-XXXX</b> 备注“租赁节税”
+          👉 添加律师微信：<b>Martcoser</b> 备注“租赁节税”<br/>
+          或扫码进群（长按保存）：<br/>
+          <img src="/group-qrcode.png" alt="微信群二维码" style="width:160px;height:160px;" />
         </div>
-        <button id="paidBtn">获取详细节税方案 ¥100</button>
+        <button id="paidBtn">进入详细节税方案付费群 ¥100</button>
       </div>
 
       <div class="divider"></div>
@@ -84,31 +84,13 @@
       <div class="foot">
         <b>免责声明</b><br/>
         1. 本工具仅供参考，实际应纳税额以税务机关核定为准。<br/>
-        2. 本计算基于全国简易计税方案（住宅3%，非住宅5%）。<br/>
-        3. 查账征收方式（据实征收）各地差异大，本工具暂不提供计算。<br/>
-        4. 出租人应依法如实申报纳税并保存相关凭证。<br/>
-        5. 条例原文：<a target="_blank" href="https://www.gov.cn/zhengce/zhengceku/202507/content_7032956.htm">国务院令第812号《住房租赁条例》</a>
+        2. 本计算基于全国简易计税方案示例。<br/>
+        3. 出租人应依法如实申报纳税并保存相关凭证。<br/>
       </div>
-    </div>
-  </div>
-
-  <!-- 广告占位（无广告时不展示） -->
-  <div id="adMask" class="ad-mask">
-    <div class="ad-box">
-      <div class="ad-title">赞助内容</div>
-      <div class="ad-img">广告位（2秒后自动显示结果）</div>
-      <div class="ad-actions">
-        <button id="skipAd" class="btn-outline" style="flex:1;">跳过</button>
-        <button id="adLearn" style="flex:1;">了解更多</button>
-      </div>
-      <div class="mut" id="countdown" style="margin-top:6px;">2 秒</div>
     </div>
   </div>
 
   <script>
-    // 广告开关（无广告：设为 false）
-    const ADS_ENABLED = true;
-
     const rentEl = document.getElementById('rent');
     const typeEl = document.getElementById('houseType');
     const calcBtn = document.getElementById('calcBtn');
@@ -116,11 +98,8 @@
     const propEl = document.getElementById('propTax');
     const incEl  = document.getElementById('incTax');
     const totalEl= document.getElementById('totalTax');
-
-    const adMask = document.getElementById('adMask');
-    const skipAd = document.getElementById('skipAd');
-    const adLearn= document.getElementById('adLearn');
-    const countdown = document.getElementById('countdown');
+    const propDeductionEl = document.getElementById('propDeduction');
+    const incDeductionEl = document.getElementById('incDeduction');
 
     const freeLawBtn = document.getElementById('freeLawBtn');
     const leadTips = document.getElementById('leadTips');
@@ -133,6 +112,9 @@
     async function doCalc() {
       const rent = Number(rentEl.value);
       const houseType = typeEl.value;
+      const propDeduction = propDeductionEl.checked;
+      const incDeduction = incDeductionEl.checked;
+
       if (!rent || rent <= 0) {
         showToast('请输入有效的月租金');
         return;
@@ -143,7 +125,7 @@
         const res = await fetch('/api/tax/calc-simple', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ monthlyRent: rent, houseType })
+          body: JSON.stringify({ monthlyRent: rent, houseType, propDeduction, incDeduction })
         });
         const data = await res.json();
         if (data.code !== 0) {
@@ -161,44 +143,13 @@
       }
     }
 
-    // 广告流程：有广告则先展示 2 秒；否则直接计算
-    calcBtn.addEventListener('click', async () => {
-      if (!ADS_ENABLED) {
-        doCalc();
-        return;
-      }
-      adMask.style.display = 'flex';
-      let left = 2;
-      countdown.textContent = left + ' 秒';
-      const timer = setInterval(() => {
-        left -= 1;
-        countdown.textContent = Math.max(left,0) + ' 秒';
-        if (left <= 0) {
-          clearInterval(timer);
-          adMask.style.display = 'none';
-          doCalc();
-        }
-      }, 1000);
+    calcBtn.addEventListener('click', doCalc);
 
-      skipAd.onclick = () => {
-        clearInterval(timer);
-        adMask.style.display = 'none';
-        doCalc();
-      };
-      adLearn.onclick = () => {
-        window.open('https://example.com/ads', '_blank');
-      };
-    });
-
-    // 引流：免费建议 → 展示群链接与说明
     freeLawBtn.addEventListener('click', () => {
       leadTips.style.display = 'block';
-      // TODO: 可在此处上报埋点 /api/lead-track
     });
 
-    // 付费入口
     paidBtn.addEventListener('click', () => {
-      // 这里可替换为你的收款页/微信支付拉起页
       window.open('https://example.com/pay?product=tax-plan&price=100', '_blank');
     });
   </script>

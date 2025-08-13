@@ -2,95 +2,82 @@ const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
-const { init: initDB, Counter } = require("./db");
 
 const logger = morgan("tiny");
 const app = express();
-
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 app.use(logger);
 
-// ---------------- 基础示例保持 ----------------
-
 // 首页
-app.get("/", async (req, res) => {
+app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// 更新计数
-app.post("/api/count", async (req, res) => {
-  const { action } = req.body;
-  if (action === "inc") {
-    await Counter.create();
-  } else if (action === "clear") {
-    await Counter.destroy({ truncate: true });
+/**
+ * 简易税费计算
+ * @param {number} monthlyRent 月租金（元）
+ * @param {string} houseType 房屋类型（residential / non_residential）
+ * @param {boolean} propDeduction 是否房产税扣除800
+ * @param {boolean} incDeduction 是否个税扣除800
+ */
+function calcSimpleTax(monthlyRent, houseType, propDeduction, incDeduction) {
+  if (!monthlyRent || monthlyRent <= 0) {
+    throw new Error("月租金必须大于 0");
   }
-  res.send({ code: 0, data: await Counter.count() });
-});
 
-// 获取计数
-app.get("/api/count", async (req, res) => {
-  const result = await Counter.count();
-  res.send({ code: 0, data: result });
-});
+  // 默认税率（可按需求调整）
+  let propertyRate = 0.04; // 房产税率
+  let incomeRate = 0.10;   // 个税率
 
-// 小程序调用，获取微信 Open ID
-app.get("/api/wx_openid", async (req, res) => {
-  if (req.headers["x-wx-source"]) {
-    res.send(req.headers["x-wx-openid"]);
-  } else {
-    res.status(400).send("not from weixin cloud");
+  if (houseType === "non_residential") {
+    propertyRate = 0.12; // 假设非住宅房产税12%
+    incomeRate = 0.20;   // 假设非住宅个税20%
   }
-});
 
-// ---------------- 全国简化版税费计算（仅核定征收） ----------------
-// 住宅：综合 3%（房产税约 2%，个税约 1%）
-// 非住宅：综合 5%（房产税约 4%，个税约 1%）
-// 说明：查账征收差异较大，本接口不提供据实核算。
+  // 房产税计税基数
+  let propertyBase = monthlyRent;
+  if (propDeduction) {
+    propertyBase = Math.max(0, monthlyRent - 800);
+  }
+  let propertyTax = propertyBase * propertyRate;
+  if (propertyBase <= 0) propertyTax = 0;
+
+  // 个税计税基数
+  let incomeBase = monthlyRent;
+  if (incDeduction) {
+    incomeBase = Math.max(0, monthlyRent - 800);
+  }
+  let incomeTax = incomeBase * incomeRate;
+  if (incomeBase <= 0) incomeTax = 0;
+
+  const totalTax = propertyTax + incomeTax;
+
+  return {
+    propertyTax: parseFloat(propertyTax.toFixed(2)),
+    incomeTax: parseFloat(incomeTax.toFixed(2)),
+    totalTax: parseFloat(totalTax.toFixed(2))
+  };
+}
+
+// 税费计算 API
 app.post("/api/tax/calc-simple", (req, res) => {
   try {
-    const { monthlyRent, houseType } = req.body || {};
-    const rent = Number(monthlyRent);
-
-    if (!rent || rent <= 0) {
-      return res.status(400).json({ code: 1, msg: "月租金必须大于0" });
-    }
-    if (!houseType || !["residential", "non_residential"].includes(houseType)) {
-      return res.status(400).json({ code: 1, msg: "houseType 取值应为 residential 或 non_residential" });
-    }
-
-    // 税率设定
-    const rates = houseType === "residential"
-      ? { total: 0.03, property: 0.02, income: 0.01 }
-      : { total: 0.05, property: 0.04, income: 0.01 };
-
-    const propertyTax = +(rent * rates.property).toFixed(2);
-    const incomeTax   = +(rent * rates.income).toFixed(2);
-    const totalTax    = +(rent * rates.total).toFixed(2);
-
-    return res.json({
-      code: 0,
-      data: {
-        houseType,
-        monthlyRent: rent,
-        propertyTax,
-        incomeTax,
-        totalTax,
-        rates
-      },
-      msg: "ok"
-    });
-  } catch (e) {
-    return res.status(500).json({ code: 1, msg: e.message || "server error" });
+    const { monthlyRent, houseType, propDeduction, incDeduction } = req.body;
+    const result = calcSimpleTax(
+      Number(monthlyRent),
+      houseType,
+      !!propDeduction,
+      !!incDeduction
+    );
+    res.json({ code: 0, data: result });
+  } catch (err) {
+    res.json({ code: 1, msg: err.message });
   }
 });
 
-// ---------------- 服务启动 ----------------
 const port = process.env.PORT || 80;
-async function bootstrap() {
-  await initDB();
-  app.listen(port, () => console.log("启动成功", port));
-}
-bootstrap();
+app.listen(port, () => {
+  console.log("服务已启动，端口：", port);
+});
