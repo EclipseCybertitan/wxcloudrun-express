@@ -5,12 +5,14 @@ const morgan = require("morgan");
 const { init: initDB, Counter } = require("./db");
 
 const logger = morgan("tiny");
-
 const app = express();
+
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 app.use(logger);
+
+// ---------------- 基础示例保持 ----------------
 
 // 首页
 app.get("/", async (req, res) => {
@@ -25,88 +27,70 @@ app.post("/api/count", async (req, res) => {
   } else if (action === "clear") {
     await Counter.destroy({ truncate: true });
   }
-  res.send({
-    code: 0,
-    data: await Counter.count(),
-  });
+  res.send({ code: 0, data: await Counter.count() });
 });
 
 // 获取计数
 app.get("/api/count", async (req, res) => {
   const result = await Counter.count();
-  res.send({
-    code: 0,
-    data: result,
-  });
+  res.send({ code: 0, data: result });
 });
 
 // 小程序调用，获取微信 Open ID
 app.get("/api/wx_openid", async (req, res) => {
   if (req.headers["x-wx-source"]) {
     res.send(req.headers["x-wx-openid"]);
+  } else {
+    res.status(400).send("not from weixin cloud");
   }
 });
 
-/**
- * 房租税费计算接口
- * 请求参数：
- * {
- *   "monthlyRent": 5000,
- *   "houseType": "residential", // 或 "non_residential"
- *   "deduction": 500 // 扣除金额，单位元，可选，最大800
- * }
- */
-app.post("/api/tax/calculate", (req, res) => {
+// ---------------- 全国简化版税费计算（仅核定征收） ----------------
+// 住宅：综合 3%（房产税约 2%，个税约 1%）
+// 非住宅：综合 5%（房产税约 4%，个税约 1%）
+// 说明：查账征收差异较大，本接口不提供据实核算。
+app.post("/api/tax/calc-simple", (req, res) => {
   try {
-    let { monthlyRent, houseType, deduction } = req.body;
+    const { monthlyRent, houseType } = req.body || {};
+    const rent = Number(monthlyRent);
 
-    if (!monthlyRent || !houseType) {
-      return res.status(400).json({ code: 1, msg: "缺少必要参数" });
+    if (!rent || rent <= 0) {
+      return res.status(400).json({ code: 1, msg: "月租金必须大于0" });
+    }
+    if (!houseType || !["residential", "non_residential"].includes(houseType)) {
+      return res.status(400).json({ code: 1, msg: "houseType 取值应为 residential 或 non_residential" });
     }
 
-    monthlyRent = Number(monthlyRent);
-    deduction = Number(deduction) || 0;
+    // 税率设定
+    const rates = houseType === "residential"
+      ? { total: 0.03, property: 0.02, income: 0.01 }
+      : { total: 0.05, property: 0.04, income: 0.01 };
 
-    // 限制扣除金额最大800
-    if (deduction > 800) deduction = 800;
-    if (deduction < 0) deduction = 0;
+    const propertyTax = +(rent * rates.property).toFixed(2);
+    const incomeTax   = +(rent * rates.income).toFixed(2);
+    const totalTax    = +(rent * rates.total).toFixed(2);
 
-    // 住房：按 5% 征收率减按 1.5%，非住房：按 5% 全额
-    const rentTaxRate = houseType === "residential" ? 0.015 : 0.05;
-    const rentTax = monthlyRent * rentTaxRate / (1 + rentTaxRate);
-
-    // 扣除后的计税基数
-    const taxableBase = Math.max(monthlyRent - rentTax - deduction, 0);
-
-    // 个人所得税
-    const incomeTaxRate = houseType === "residential" ? 0.10 : 0.20;
-    const incomeTax = taxableBase * incomeTaxRate;
-
-    const totalTax = rentTax + incomeTax;
-
-    res.json({
+    return res.json({
       code: 0,
       data: {
-        rentTax: parseFloat(rentTax.toFixed(2)),
-        taxableBase: parseFloat(taxableBase.toFixed(2)),
-        incomeTax: parseFloat(incomeTax.toFixed(2)),
-        totalTax: parseFloat(totalTax.toFixed(2)),
-        deductionApplied: deduction
+        houseType,
+        monthlyRent: rent,
+        propertyTax,
+        incomeTax,
+        totalTax,
+        rates
       },
       msg: "ok"
     });
-  } catch (err) {
-    res.status(500).json({ code: 1, msg: err.message });
+  } catch (e) {
+    return res.status(500).json({ code: 1, msg: e.message || "server error" });
   }
 });
 
+// ---------------- 服务启动 ----------------
 const port = process.env.PORT || 80;
-
 async function bootstrap() {
   await initDB();
-  app.listen(port, () => {
-    console.log("启动成功", port);
-  });
+  app.listen(port, () => console.log("启动成功", port));
 }
-
 bootstrap();

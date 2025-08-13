@@ -1,0 +1,216 @@
+{\rtf1\ansi\ansicpg936\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red25\green28\blue31;}
+{\*\expandedcolortbl;;\cssrgb\c12941\c14510\c16078;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs24 \cf2 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 <!doctype html>\
+<html lang="zh-CN">\
+<head>\
+  <meta charset="UTF-8" />\
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />\
+  <title>\uc0\u20840 \u22269 \u25151 \u31199 \u31246 \u36153 \u35745 \u31639 \u22120 \u65288 2025\u29256 \u65289 </title>\
+  <style>\
+    :root \{ --pri:#07c160; --mut:#666; --bg:#f7f7f7; --card:#fff; \}\
+    body \{ margin:0; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial; background:var(--bg); color:#111;\}\
+    .wrap \{ max-width: 720px; margin: 0 auto; padding: 16px; \}\
+    .header \{ margin: 8px 0 16px; \}\
+    .title \{ font-size: 20px; font-weight: 700; \}\
+    .subtitle \{ color: var(--mut); font-size: 13px; margin-top: 6px; \}\
+    .card \{ background: var(--card); border-radius: 12px; padding: 16px; box-shadow: 0 2px 12px rgba(0,0,0,.04); \}\
+    .field \{ margin: 10px 0; \}\
+    label \{ display:block; font-size: 14px; margin-bottom: 6px; \}\
+    input, select, button \{ width: 100%; padding: 12px; border:1px solid #ddd; border-radius:10px; font-size: 15px; \}\
+    button \{ background: var(--pri); color: #fff; border: none; font-weight: 600; \}\
+    button:disabled \{ opacity: .6; \}\
+    .row \{ display:flex; gap:12px; \}\
+    .row .col \{ flex:1; \}\
+    .result \{ margin-top: 16px; \}\
+    .result .item \{ display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px dashed #eee; \}\
+    .result .item:last-child \{ border-bottom: none; \}\
+    .mut \{ color: var(--mut); font-size: 12px; \}\
+    .divider \{ height: 1px; background:#eee; margin:16px 0; \}\
+    .cta \{ display:flex; flex-direction:column; gap:10px; \}\
+    .btn-outline \{ background:#fff; color:var(--pri); border:1px solid var(--pri); \}\
+    .ad-mask \{ position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; z-index:999; \}\
+    .ad-box \{ width: min(92vw, 480px); background:#fff; border-radius:14px; padding:16px; text-align:center; \}\
+    .ad-title \{ font-weight:700; margin-bottom:6px; \}\
+    .ad-img \{ width:100%; height:160px; background:#eee; border-radius:10px; margin:10px 0; display:flex; align-items:center; justify-content:center; color:#999; \}\
+    .ad-actions \{ display:flex; gap:10px; margin-top:10px;\}\
+    .foot \{ color:#888; font-size:12px; line-height:1.6; margin-top:16px; \}\
+    a \{ color:#2b6cb0; text-decoration:none; \}\
+  </style>\
+</head>\
+<body>\
+  <div class="wrap">\
+    <div class="header">\
+      <div class="title">\uc0\u20840 \u22269 \u25151 \u31199 \u31246 \u36153 \u35745 \u31639 \u22120 \u65288 2025\u29256 \u65289 </div>\
+      <div class="subtitle">\uc0\u22522 \u20110 \u20840 \u22269 \u31616 \u26131 \u35745 \u31246 \u26041 \u26696 \u65306 \u20303 \u23429 3%\u65292 \u38750 \u20303 \u23429 5%\u65307 \u26597 \u36134 \u24449 \u25910 \u24046 \u24322 \u36739 \u22823 \u65292 \u26242 \u19981 \u25552 \u20379 \u35745 \u31639 \u12290 </div>\
+    </div>\
+\
+    <div class="card">\
+      <div class="row">\
+        <div class="col field">\
+          <label>\uc0\u26376 \u31199 \u37329 \u65288 \u20803 \u65289 </label>\
+          <input id="rent" type="number" min="0" placeholder="\uc0\u20363 \u22914  5000" />\
+        </div>\
+        <div class="col field">\
+          <label>\uc0\u25151 \u23627 \u31867 \u22411 </label>\
+          <select id="houseType">\
+            <option value="residential">\uc0\u20303 \u23429 \u65288 3%\u65289 </option>\
+            <option value="non_residential">\uc0\u38750 \u20303 \u23429 \u65288 5%\u65289 </option>\
+          </select>\
+        </div>\
+      </div>\
+\
+      <button id="calcBtn">\uc0\u35745 \u31639 </button>\
+\
+      <div id="result" class="result" style="display:none;">\
+        <div class="divider"></div>\
+        <div class="item"><span>\uc0\u25151 \u20135 \u31246 \u65288 \u32422 \u65289 </span><b id="propTax">-</b></div>\
+        <div class="item"><span>\uc0\u20010 \u20154 \u25152 \u24471 \u31246 \u65288 \u32422 \u65289 </span><b id="incTax">-</b></div>\
+        <div class="item"><span>\uc0\u21512 \u35745 \u31246 \u36153 </span><b id="totalTax">-</b></div>\
+        <div class="mut" style="margin-top:8px;">\uc0\u25552 \u31034 \u65306 \u26412 \u39029 \u38754 \u37319 \u29992 \u20840 \u22269 \u31616 \u26131 \u35745 \u31246 \u26041 \u26696 \u12290 \u23454 \u38469 \u31246 \u29575 \u21487 \u33021 \u38543 \u22320 \u21306 \u21475 \u24452 \u30053 \u26377 \u35843 \u25972 \u12290 </div>\
+      </div>\
+\
+      <div class="divider"></div>\
+\
+      <div class="cta">\
+        <button id="freeLawBtn" class="btn-outline">\uc0\u20813 \u36153 \u33719 \u21462 \u24459 \u24072 \u24314 \u35758 \u65288 \u21512 \u21516 \u39118 \u25511 \u19982 \u33410 \u31246 \u35201 \u28857 \u65289 </button>\
+        <div id="leadTips" class="mut" style="display:none;">\
+          \uc0\u55357 \u56393  \u24050 \u20026 \u20320 \u20934 \u22791 \u20132 \u27969 \u32676 \u19982 \u25351 \u24341 \u65306 <br/>\
+          \'95 \uc0\u32676 \u38142 \u25509 \u65306 <a target="_blank" href="https://weixin.qq.com/xxxxx">\u28857 \u20987 \u21152 \u20837 \u24494 \u20449 \u32676 </a><br/>\
+          \'95 \uc0\u25110 \u28155 \u21152 \u24494 \u20449 \u65306 <b>Lawyer-XXXX</b> \u22791 \u27880 \'93\u31199 \u36161 \u33410 \u31246 \'94\
+        </div>\
+        <button id="paidBtn">\uc0\u33719 \u21462 \u35814 \u32454 \u33410 \u31246 \u26041 \u26696  \'a5100</button>\
+      </div>\
+\
+      <div class="divider"></div>\
+\
+      <div class="foot">\
+        <b>\uc0\u20813 \u36131 \u22768 \u26126 </b><br/>\
+        1. \uc0\u26412 \u24037 \u20855 \u20165 \u20379 \u21442 \u32771 \u65292 \u23454 \u38469 \u24212 \u32435 \u31246 \u39069 \u20197 \u31246 \u21153 \u26426 \u20851 \u26680 \u23450 \u20026 \u20934 \u12290 <br/>\
+        2. \uc0\u26412 \u35745 \u31639 \u22522 \u20110 \u20840 \u22269 \u31616 \u26131 \u35745 \u31246 \u26041 \u26696 \u65288 \u20303 \u23429 3%\u65292 \u38750 \u20303 \u23429 5%\u65289 \u12290 <br/>\
+        3. \uc0\u26597 \u36134 \u24449 \u25910 \u26041 \u24335 \u65288 \u25454 \u23454 \u24449 \u25910 \u65289 \u21508 \u22320 \u24046 \u24322 \u22823 \u65292 \u26412 \u24037 \u20855 \u26242 \u19981 \u25552 \u20379 \u35745 \u31639 \u12290 <br/>\
+        4. \uc0\u20986 \u31199 \u20154 \u24212 \u20381 \u27861 \u22914 \u23454 \u30003 \u25253 \u32435 \u31246 \u24182 \u20445 \u23384 \u30456 \u20851 \u20973 \u35777 \u12290 <br/>\
+        5. \uc0\u26465 \u20363 \u21407 \u25991 \u65306 <a target="_blank" href="https://www.gov.cn/zhengce/zhengceku/202507/content_7032956.htm">\u22269 \u21153 \u38498 \u20196 \u31532 812\u21495 \u12298 \u20303 \u25151 \u31199 \u36161 \u26465 \u20363 \u12299 </a>\
+      </div>\
+    </div>\
+  </div>\
+\
+  <!-- \uc0\u24191 \u21578 \u21344 \u20301 \u65288 \u26080 \u24191 \u21578 \u26102 \u19981 \u23637 \u31034 \u65289  -->\
+  <div id="adMask" class="ad-mask">\
+    <div class="ad-box">\
+      <div class="ad-title">\uc0\u36190 \u21161 \u20869 \u23481 </div>\
+      <div class="ad-img">\uc0\u24191 \u21578 \u20301 \u65288 2\u31186 \u21518 \u33258 \u21160 \u26174 \u31034 \u32467 \u26524 \u65289 </div>\
+      <div class="ad-actions">\
+        <button id="skipAd" class="btn-outline" style="flex:1;">\uc0\u36339 \u36807 </button>\
+        <button id="adLearn" style="flex:1;">\uc0\u20102 \u35299 \u26356 \u22810 </button>\
+      </div>\
+      <div class="mut" id="countdown" style="margin-top:6px;">2 \uc0\u31186 </div>\
+    </div>\
+  </div>\
+\
+  <script>\
+    // \uc0\u24191 \u21578 \u24320 \u20851 \u65288 \u26080 \u24191 \u21578 \u65306 \u35774 \u20026  false\u65289 \
+    const ADS_ENABLED = true;\
+\
+    const rentEl = document.getElementById('rent');\
+    const typeEl = document.getElementById('houseType');\
+    const calcBtn = document.getElementById('calcBtn');\
+    const resultBox = document.getElementById('result');\
+    const propEl = document.getElementById('propTax');\
+    const incEl  = document.getElementById('incTax');\
+    const totalEl= document.getElementById('totalTax');\
+\
+    const adMask = document.getElementById('adMask');\
+    const skipAd = document.getElementById('skipAd');\
+    const adLearn= document.getElementById('adLearn');\
+    const countdown = document.getElementById('countdown');\
+\
+    const freeLawBtn = document.getElementById('freeLawBtn');\
+    const leadTips = document.getElementById('leadTips');\
+    const paidBtn = document.getElementById('paidBtn');\
+\
+    function showToast(msg)\{\
+      alert(msg);\
+    \}\
+\
+    async function doCalc() \{\
+      const rent = Number(rentEl.value);\
+      const houseType = typeEl.value;\
+      if (!rent || rent <= 0) \{\
+        showToast('\uc0\u35831 \u36755 \u20837 \u26377 \u25928 \u30340 \u26376 \u31199 \u37329 ');\
+        return;\
+      \}\
+      calcBtn.disabled = true;\
+\
+      try \{\
+        const res = await fetch('/api/tax/calc-simple', \{\
+          method: 'POST',\
+          headers: \{ 'Content-Type': 'application/json' \},\
+          body: JSON.stringify(\{ monthlyRent: rent, houseType \})\
+        \});\
+        const data = await res.json();\
+        if (data.code !== 0) \{\
+          throw new Error(data.msg || '\uc0\u35745 \u31639 \u22833 \u36133 ');\
+        \}\
+        const r = data.data;\
+        propEl.textContent = r.propertyTax.toFixed(2) + ' \uc0\u20803 ';\
+        incEl.textContent = r.incomeTax.toFixed(2) + ' \uc0\u20803 ';\
+        totalEl.textContent = r.totalTax.toFixed(2) + ' \uc0\u20803 ';\
+        resultBox.style.display = 'block';\
+      \} catch (e) \{\
+        showToast(e.message || '\uc0\u35831 \u27714 \u22833 \u36133 ');\
+      \} finally \{\
+        calcBtn.disabled = false;\
+      \}\
+    \}\
+\
+    // \uc0\u24191 \u21578 \u27969 \u31243 \u65306 \u26377 \u24191 \u21578 \u21017 \u20808 \u23637 \u31034  2 \u31186 \u65307 \u21542 \u21017 \u30452 \u25509 \u35745 \u31639 \
+    calcBtn.addEventListener('click', async () => \{\
+      if (!ADS_ENABLED) \{\
+        doCalc();\
+        return;\
+      \}\
+      adMask.style.display = 'flex';\
+      let left = 2;\
+      countdown.textContent = left + ' \uc0\u31186 ';\
+      const timer = setInterval(() => \{\
+        left -= 1;\
+        countdown.textContent = Math.max(left,0) + ' \uc0\u31186 ';\
+        if (left <= 0) \{\
+          clearInterval(timer);\
+          adMask.style.display = 'none';\
+          doCalc();\
+        \}\
+      \}, 1000);\
+\
+      skipAd.onclick = () => \{\
+        clearInterval(timer);\
+        adMask.style.display = 'none';\
+        doCalc();\
+      \};\
+      adLearn.onclick = () => \{\
+        window.open('https://example.com/ads', '_blank');\
+      \};\
+    \});\
+\
+    // \uc0\u24341 \u27969 \u65306 \u20813 \u36153 \u24314 \u35758  \u8594  \u23637 \u31034 \u32676 \u38142 \u25509 \u19982 \u35828 \u26126 \
+    freeLawBtn.addEventListener('click', () => \{\
+      leadTips.style.display = 'block';\
+      // TODO: \uc0\u21487 \u22312 \u27492 \u22788 \u19978 \u25253 \u22475 \u28857  /api/lead-track\
+    \});\
+\
+    // \uc0\u20184 \u36153 \u20837 \u21475 \
+    paidBtn.addEventListener('click', () => \{\
+      // \uc0\u36825 \u37324 \u21487 \u26367 \u25442 \u20026 \u20320 \u30340 \u25910 \u27454 \u39029 /\u24494 \u20449 \u25903 \u20184 \u25289 \u36215 \u39029 \
+      window.open('https://example.com/pay?product=tax-plan&price=100', '_blank');\
+    \});\
+  </script>\
+</body>\
+</html>\
+}
