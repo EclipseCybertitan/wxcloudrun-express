@@ -4,79 +4,127 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
   <title>全国房租税费计算器（2025版）</title>
+
+  <!-- 轻量美化插件：Pure-CSS Form Kit（内置，无外链） -->
   <style>
-    :root { --pri:#07c160; --mut:#666; --bg:#f7f7f7; --card:#fff; }
-    body { margin:0; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial; background:var(--bg); color:#111;}
-    .wrap { max-width: 720px; margin: 0 auto; padding: 16px; }
-    .header { margin: 8px 0 16px; }
-    .title { font-size: 20px; font-weight: 700; }
-    .subtitle { color: var(--mut); font-size: 13px; margin-top: 6px; }
-    .card { background: var(--card); border-radius: 12px; padding: 16px; box-shadow: 0 2px 12px rgba(0,0,0,.04); }
-    .field { margin: 10px 0; }
-    label { display:block; font-size: 14px; margin-bottom: 6px; }
-    input, select, button { width: 100%; padding: 12px; border:1px solid #ddd; border-radius:10px; font-size: 15px; }
-    button { background: var(--pri); color: #fff; border: none; font-weight: 600; }
-    button:disabled { opacity: .6; }
-    .row { display:flex; gap:12px; flex-wrap:wrap; }
-    .row .col { flex:1; min-width: 140px; }
-    .result { margin-top: 16px; }
-    .result .item { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px dashed #eee; }
-    .result .item:last-child { border-bottom: none; }
-    .mut { color: var(--mut); font-size: 12px; }
-    .divider { height: 1px; background:#eee; margin:16px 0; }
-    .cta { display:flex; flex-direction:column; gap:10px; }
-    .btn-outline { background:#fff; color:var(--pri); border:1px solid var(--pri); }
-    .foot { color:#888; font-size:12px; line-height:1.6; margin-top:16px; }
-    a { color:#2b6cb0; text-decoration:none; }
+    :root{
+      --pri:#07c160; --txt:#111; --mut:#6b7280; --bg:#f6f7fb; --card:#fff;
+      --bd:#e5e7eb; --bd-strong:#d1d5db; --shadow:0 6px 20px rgba(0,0,0,.06);
+      --radius:14px; --radius-sm:10px; --focus:#16a34a;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial;
+         color:var(--txt);background:linear-gradient(180deg,#f9fafb 0%,#eef2ff 100%) fixed;}
+    .wrap{max-width:820px;margin:0 auto;padding:20px}
+    .header{margin:6px 0 16px}
+    .title{font-size:22px;font-weight:800;letter-spacing:.2px}
+    .subtitle{color:var(--mut);font-size:13px;margin-top:6px}
+
+    .card{background:var(--card);border:1px solid var(--bd);
+          border-radius:var(--radius);box-shadow:var(--shadow);padding:18px}
+
+    /* 栅格：窄屏自动换行，避免“碰撞” */
+    .row{display:flex;flex-wrap:wrap;gap:14px}
+    .col{flex:1 1 340px;min-width:240px}
+
+    /* 表单美化（插件核心） */
+    .field{margin:10px 0}
+    .label{font-size:13px;color:var(--mut);margin:0 0 6px 4px}
+    .input,.select{width:100%;appearance:none;background:#fff;border:1px solid var(--bd);
+      border-radius:var(--radius-sm);padding:12px 14px;font-size:15px;outline:none;
+      transition:.15s box-shadow,.15s border}
+    .input:focus,.select:focus{border-color:var(--focus);box-shadow:0 0 0 4px rgba(22,163,74,.12)}
+    .select{background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="%236b7280"><path d="M7 10l5 5 5-5z"/></svg>');
+      background-repeat:no-repeat;background-position:right 12px center;padding-right:38px}
+
+    .btn{width:100%;padding:12px 14px;border:none;border-radius:12px;background:var(--pri);
+      color:#fff;font-weight:700;font-size:16px;cursor:pointer;transition:.15s transform,.15s opacity}
+    .btn:active{transform:translateY(1px)}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+    .btn-outline{background:#fff;color:var(--pri);border:1px solid var(--pri)}
+
+    /* 复选框排版与对齐 */
+    .checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+    .check{display:flex;align-items:center;gap:10px;border:1px dashed var(--bd);
+      padding:10px 12px;border-radius:12px;background:#fcfcfd}
+    .check input[type=checkbox]{width:18px;height:18px;accent-color:var(--pri)}
+
+    .divider{height:1px;background:var(--bd);margin:16px 0}
+    .result{margin-top:10px}
+    .item{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed var(--bd)}
+    .item:last-child{border-bottom:none}
+    .mut{color:var(--mut);font-size:12px}
+
+    .cta{display:flex;flex-direction:column;gap:10px}
+    .lead{display:none}
+    .lead img{width:180px;height:180px;border-radius:12px;border:1px solid var(--bd-strong)}
+
+    .foot{color:#667085;font-size:12px;line-height:1.65}
+    .foot a{color:#2563eb;text-decoration:underline} /* 链接明显可点 */
+
+    /* 小屏优化 */
+    @media (max-width:420px){
+      .col{min-width:100%}
+      .title{font-size:20px}
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="header">
       <div class="title">全国房租税费计算器（2025版）</div>
-      <div class="subtitle">基于全国简易计税方案：住宅房产税4%，个税10%；非住宅税率示例可调整。</div>
+      <div class="subtitle">口径（按月）：住宅房产税4%、个税10%；支持“扣除800元”选项。非住宅税率为示例，可根据需要调整。</div>
     </div>
 
     <div class="card">
       <div class="row">
         <div class="col field">
-          <label>月租金（元）</label>
-          <input id="rent" type="number" min="0" placeholder="例如 5000" />
+          <div class="label">月租金（元）</div>
+          <input id="rent" type="number" min="0" placeholder="例如 5000" class="input" />
         </div>
         <div class="col field">
-          <label>房屋类型</label>
-          <select id="houseType">
+          <div class="label">房屋类型</div>
+          <select id="houseType" class="select">
             <option value="residential">住宅（房产税4%，个税10%）</option>
-            <option value="non_residential">非住宅（示例房产税12%，个税20%）</option>
+            <option value="non_residential">非住宅（示例：房产税12%，个税20%）</option>
           </select>
         </div>
       </div>
 
       <div class="field">
-        <label><input type="checkbox" id="propDeduction" /> 房产税扣除800元修缮费</label>
-        <label><input type="checkbox" id="incDeduction" /> 个税扣除800元租金</label>
+        <div class="label">扣除选项（按月）</div>
+        <div class="checks">
+          <label class="check">
+            <input type="checkbox" id="propDeduction" />
+            <span>房产税扣除 800 元修缮费</span>
+          </label>
+          <label class="check">
+            <input type="checkbox" id="incDeduction" />
+            <span>个税扣除 800 元租金</span>
+          </label>
+        </div>
       </div>
 
-      <button id="calcBtn">计算</button>
+      <button id="calcBtn" class="btn">计算</button>
 
       <div id="result" class="result" style="display:none;">
         <div class="divider"></div>
         <div class="item"><span>房产税（约 / 月）</span><b id="propTax">-</b></div>
         <div class="item"><span>个人所得税（约 / 月）</span><b id="incTax">-</b></div>
         <div class="item"><span>合计税费（约 / 月）</span><b id="totalTax">-</b></div>
-        <div class="mut" style="margin-top:8px;">提示：低于等于800元时可全额免税，扣除选项会影响基数。</div>
+        <div class="mut" style="margin-top:8px;">提示：若基数≤800 元，则相应税目可为 0；选择项仅影响基数，请以税务机关口径为准。</div>
       </div>
 
       <div class="divider"></div>
 
       <div class="cta">
-        <button id="freeLawBtn" class="btn-outline">免费获取律师建议</button>
-        <div id="leadTips" class="mut" style="display:none;">
-          👉 添加律师微信：<b>Martcoser</b> 备注“租赁节税”<br/>
+        <button id="freeLawBtn" class="btn btn-outline">免费获取律师建议</button>
+        <div id="leadTips" class="lead mut">
+          👉 添加律师微信：<b>Martcoser</b>（备注“租赁节税”）<br/>
           或扫码进群（长按保存）：<br/>
-          <img src="/group-qrcode.jpg" alt="微信群二维码" style="width:160px;height:160px;" />
+          <img src="/group-qrcode.png" alt="微信群二维码" onerror="this.style.display='none'">
         </div>
-        <button id="paidBtn">进入详细节税方案付费群 ¥100</button>
+        <button id="paidBtn" class="btn">进入详细节税方案付费群 ¥100</button>
       </div>
 
       <div class="divider"></div>
@@ -84,14 +132,17 @@
       <div class="foot">
         <b>免责声明</b><br/>
         1. 本工具仅供参考，实际应纳税额以税务机关核定为准。<br/>
-        2. 本计算基于全国简易计税方案示例，查账征收不在此列。<br/>
-        3. 出租人应依法如实申报纳税并保存相关凭证，各省市自治区在此基础上有其他政策的，本计算器暂未考虑。<br/>
-        4. 国务院《住房租赁条例》于2025年9月15日实施，文件详情：https://www.gov.cn/gongbao/2025/issue_12186/202507/content_7034094.html
+        2. 计算基于月度口径；“扣除 800 元”系示例开关，地区口径可能存在差异。<br/>
+        3. 出租人应依法如实申报并保存凭证。<br/>
+        4. 条例原文：<a target="_blank" href="https://www.gov.cn/gongbao/2025/issue_12186/202507/content_7034094.html">国务院令第812号《住房租赁条例》</a>
       </div>
     </div>
   </div>
 
   <script>
+    // ——可在此集中配置你的链接——
+    const PAID_URL = 'https://example.com/pay?product=tax-plan&price=100';
+
     const rentEl = document.getElementById('rent');
     const typeEl = document.getElementById('houseType');
     const calcBtn = document.getElementById('calcBtn');
@@ -106,20 +157,15 @@
     const leadTips = document.getElementById('leadTips');
     const paidBtn = document.getElementById('paidBtn');
 
-    function showToast(msg){
-      alert(msg);
-    }
+    function toast(msg){ alert(msg); }
 
     async function doCalc() {
       const rent = Number(rentEl.value);
       const houseType = typeEl.value;
-      const propDeduction = propDeductionEl.checked;
-      const incDeduction = incDeductionEl.checked;
+      const propDeduction = !!propDeductionEl.checked;
+      const incDeduction = !!incDeductionEl.checked;
 
-      if (!rent || rent <= 0) {
-        showToast('请输入有效的月租金');
-        return;
-      }
+      if (!rent || rent <= 0) { toast('请输入有效的月租金'); return; }
       calcBtn.disabled = true;
 
       try {
@@ -129,30 +175,23 @@
           body: JSON.stringify({ monthlyRent: rent, houseType, propDeduction, incDeduction })
         });
         const data = await res.json();
-        if (data.code !== 0) {
-          throw new Error(data.msg || '计算失败');
-        }
+        if (data.code !== 0) throw new Error(data.msg || '计算失败');
+
         const r = data.data;
         propEl.textContent = r.propertyTax.toFixed(2) + ' 元';
-        incEl.textContent = r.incomeTax.toFixed(2) + ' 元';
-        totalEl.textContent = r.totalTax.toFixed(2) + ' 元';
+        incEl.textContent  = r.incomeTax.toFixed(2) + ' 元';
+        totalEl.textContent= r.totalTax.toFixed(2) + ' 元';
         resultBox.style.display = 'block';
       } catch (e) {
-        showToast(e.message || '请求失败');
+        toast(e.message || '请求失败');
       } finally {
         calcBtn.disabled = false;
       }
     }
 
     calcBtn.addEventListener('click', doCalc);
-
-    freeLawBtn.addEventListener('click', () => {
-      leadTips.style.display = 'block';
-    });
-
-    paidBtn.addEventListener('click', () => {
-      window.open('https://example.com/pay?product=tax-plan&price=100', '_blank');
-    });
+    freeLawBtn.addEventListener('click', () => { leadTips.style.display = 'block'; });
+    paidBtn.addEventListener('click', () => window.open(PAID_URL, '_blank'));
   </script>
 </body>
 </html>
